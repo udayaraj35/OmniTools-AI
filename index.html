@@ -1,162 +1,186 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OmniTools AI Model 1 | By Udaya Raj Khanal</title>
+    <title>omniTools AI | Model 1 - Advanced</title>
     <style>
         :root {
-            --primary: #00d2ff;
-            --bg: #0a0c10;
-            --sidebar: #11141b;
-            --text: #e6edf3;
-            --glass: rgba(255, 255, 255, 0.05);
-            --accent-purple: #9d50bb;
+            --bg: #f7f9fb;
+            --sidebar-bg: #11141b;
+            --accent: #00d2ff;
+            --text-dark: #1a1a1a;
+            --text-light: #ffffff;
+            --glass: rgba(255, 255, 255, 0.08);
+            --bot-bubble: #f0f2f5;
+            --user-bubble: #00d2ff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        [data-theme="light"] {
-            --bg: #f8f9fa;
-            --sidebar: #ffffff;
-            --text: #1a1a1a;
-            --glass: rgba(0, 0, 0, 0.05);
+        [data-theme="dark"] {
+            --bg: #0d1117;
+            --bot-bubble: #161b22;
+            --text-dark: #e6edf3;
+            --sidebar-bg: #010409;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: 0.3s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; transition: 0.3s; }
 
-        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
+        body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--text-dark); }
 
-        /* Sidebar - Tools Section */
+        /* Sidebar - Glassmorphism style */
         .sidebar {
-            width: 280px; background: var(--sidebar); border-right: 1px solid var(--glass);
-            display: flex; flex-direction: column; padding: 20px; z-index: 1000;
+            width: 280px; background: var(--sidebar-bg); color: var(--text-light);
+            display: flex; flex-direction: column; padding: 25px; z-index: 100;
         }
 
-        .logo-area { margin-bottom: 30px; }
-        .model-badge { font-size: 0.7rem; background: var(--primary); color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-
-        .tools-grid { display: grid; grid-template-columns: 1fr; gap: 10px; flex: 1; overflow-y: auto; }
-        .tool-card {
-            padding: 12px; background: var(--glass); border-radius: 12px; cursor: pointer;
-            border: 1px solid transparent; font-size: 0.85rem; display: flex; align-items: center; gap: 10px;
+        .logo-box { margin-bottom: 40px; }
+        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--accent); letter-spacing: -1px; }
+        .model-tag { 
+            background: var(--accent); color: #000; font-size: 0.7rem; 
+            padding: 3px 10px; border-radius: 6px; font-weight: 900; width: fit-content; margin-top: 5px;
         }
-        .tool-card:hover { border-color: var(--primary); background: rgba(0, 210, 255, 0.1); }
 
-        /* Main Chat Area */
-        .chat-container { flex: 1; display: flex; flex-direction: column; position: relative; }
+        .tools-list { flex: 1; overflow-y: auto; }
+        .tool-item {
+            background: var(--glass); border: 1px solid transparent; color: #fff; padding: 14px;
+            border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 0.9rem;
+        }
+        .tool-item:hover { background: rgba(0, 210, 255, 0.1); border-color: var(--accent); transform: translateX(5px); }
+
+        /* Main Area */
+        .main-chat { flex: 1; display: flex; flex-direction: column; position: relative; }
 
         header {
-            padding: 15px 25px; border-bottom: 1px solid var(--glass);
-            display: flex; justify-content: space-between; align-items: center; background: var(--bg);
+            height: 70px; padding: 0 30px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        #chat-window { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .bubble { max-width: 85%; padding: 14px 18px; border-radius: 20px; line-height: 1.6; }
-        .user { align-self: flex-end; background: linear-gradient(135deg, var(--primary), #3a7bd5); color: white; }
-        .bot { align-self: flex-start; background: var(--glass); border: 1px solid var(--glass); }
+        #chat-window { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; scroll-behavior: smooth; }
 
-        .thought-process { font-style: italic; font-size: 0.8rem; color: var(--primary); margin-bottom: 10px; display: none; }
+        /* Message Bubbles - Advanced ChatGPT Style */
+        .bubble { max-width: 85%; padding: 16px 22px; border-radius: 22px; font-size: 1rem; line-height: 1.6; position: relative; box-shadow: var(--shadow); }
+        .user { align-self: flex-end; background: linear-gradient(135deg, var(--accent), #3a7bd5); color: white; border-bottom-right-radius: 4px; }
+        .bot { align-self: flex-start; background: var(--bot-bubble); border-bottom-left-radius: 4px; border: 1px solid rgba(0,0,0,0.03); }
 
-        /* Bottom Input Bar */
-        .input-area { padding: 20px; background: var(--bg); }
-        .input-wrapper {
-            background: var(--sidebar); padding: 10px 15px; border-radius: 20px;
-            display: flex; align-items: center; gap: 12px; border: 1px solid var(--glass);
+        .thinking { font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+
+        /* Input Zone - No character limit */
+        .input-container { padding: 25px 50px; background: transparent; }
+        .input-actions { display: flex; gap: 15px; margin-bottom: 12px; align-items: center; }
+        
+        .mode-switch {
+            background: var(--bot-bubble); border: 1px solid rgba(0,0,0,0.05); padding: 8px 18px;
+            border-radius: 25px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
+        }
+        .mode-switch.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        .box-wrapper {
+            display: flex; align-items: center; background: var(--bot-bubble); 
+            padding: 12px 25px; border-radius: 35px; border: 1px solid rgba(0,0,0,0.08); box-shadow: var(--shadow);
+        }
+
+        .action-btn { font-size: 1.4rem; color: var(--accent); cursor: pointer; margin-right: 15px; background:none; border:none; }
+        textarea { 
+            flex: 1; background: transparent; border: none; outline: none; font-size: 1.05rem; 
+            color: var(--text-dark); resize: none; max-height: 150px; min-height: 24px;
         }
         
-        .plus-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--glass); border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; }
-        input[type="text"] { flex: 1; background: transparent; border: none; color: var(--text); outline: none; font-size: 1rem; }
-        
-        .mode-selector {
-            display: flex; gap: 10px; margin-bottom: 10px; justify-content: center;
+        .send-btn { 
+            background: var(--accent); color: white; border: none; width: 45px; height: 45px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
-        .mode-btn { padding: 5px 12px; border-radius: 15px; border: 1px solid var(--glass); font-size: 0.75rem; cursor: pointer; color: #fff; background: transparent; }
-        .mode-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
+        .send-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent); }
 
-        @media (max-width: 768px) { .sidebar { display: none; } }
+        /* Mobile Fix */
+        @media (max-width: 768px) { .sidebar { display: none; } .input-container { padding: 15px; } .bubble { max-width: 90%; } }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
     <aside class="sidebar">
-        <div class="logo-area">
-            <h2 style="color:var(--primary)">omniTools</h2>
-            <span class="model-badge">MODEL 1</span>
+        <div class="logo-box">
+            <div class="logo-text">omniTools</div>
+            <div class="model-tag">MODEL 1 PRO</div>
         </div>
         
-        <div class="tools-grid">
-            <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 5px;">AVAILABLE TOOLS</p>
-            <div class="tool-card" onclick="setTool('Europass CV')">📄 Europass CV Maker</div>
-            <div class="tool-card" onclick="setTool('ATS Resume')">🤖 ATS Resume Pro</div>
-            <div class="tool-card" onclick="setTool('Photo Generation')">🎨 Realistic Image Gen</div>
-            <div class="tool-card" onclick="setTool('Excel Data')">📊 Excel/Data Processor</div>
-            <div class="tool-card" onclick="setTool('Social Media')">📱 Social Story Expert</div>
-            <div class="tool-card" onclick="setTool('Content Writing')">✍️ Story & Script Writer</div>
-            <div class="tool-card" style="opacity: 0.5; cursor: not-allowed;">🚀 Model 2 (Coming Soon)</div>
+        <div class="tools-list">
+            <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 15px; letter-spacing: 1px;">PROFESSIONAL TOOLS</p>
+            <div class="tool-item" onclick="useTool('Europass CV')">📄 Europass CV Maker</div>
+            <div class="tool-item" onclick="useTool('ATS Resume')">🤖 ATS Resume Expert</div>
+            <div class="tool-item" onclick="useTool('AI Image')">🎨 realistic Image Generator</div>
+            <div class="tool-item" onclick="useTool('Data Analysis')">📊 Excel & Data Pro</div>
+            <div class="tool-item" onclick="useTool('Social Media')">📱 Social Content Kit</div>
         </div>
-
-        <div style="margin-top: 20px; border-top: 1px solid var(--glass); padding-top: 10px;">
-            <p style="font-size: 0.75rem; color: var(--primary);">Creator: Udaya Raj Khanal</p>
+        
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass);">
+            <div style="font-size: 0.8rem; color: var(--accent);">By Udaya Raj Khanal</div>
+            <div style="font-size: 0.6rem; opacity: 0.4; margin-top: 5px;">OmniTools v1.5.0 Build 2026</div>
         </div>
     </aside>
 
-    <main class="chat-container">
+    <main class="main-chat">
         <header>
-            <div><strong>omniTools AI Mode 1</strong></div>
-            <button onclick="document.body.dataset.theme = document.body.dataset.theme === 'light' ? 'dark' : 'light'" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🌓</button>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="width:10px; height:10px; background:#00ff88; border-radius:50%;"></span>
+                <strong>omniTools AI Mode 1</strong>
+            </div>
+            <button onclick="toggleTheme()" class="action-btn" style="margin:0;">🌓</button>
         </header>
 
         <div id="chat-window">
             <div class="bubble bot">
-                नमस्ते! म <strong>omniTools AI Model 1</strong> हुँ। मलाई उदय राज खनालले बनाउनुभएको हो। <br><br>
-                तपाईं मलाई कुनै पनि प्रश्न सोध्न सक्नुहुन्छ, CV बनाउन सक्नुहुन्छ, वा `+` बटन थिचेर फाइलहरू अपलोड गर्न सक्नुहुन्छ। 
+                नमस्ते! म <b>omniTools AI Model 1</b> हुँ। मलाई उदय राज खनालले अझ शक्तिशाली र एडभान्स बनाउनुभएको छ। <br><br>
+                अब म लामो सन्देशहरू बुझ्न सक्छु र तपाईंको जुनसुकै प्रश्नको सही उत्तर, CV निर्माण वा फोटो जेनेरेसन गर्न सक्छु। मलाई केही सोध्नुहोस्!
             </div>
         </div>
 
-        <div class="input-area">
-            <div class="mode-selector">
-                <button class="mode-btn active" id="fast-mode" onclick="setAIStyle('fast')">⚡ Fast Response</button>
-                <button class="mode-btn" id="deep-mode" onclick="setAIStyle('deep')">🧠 Deep Thinking</button>
+        <div class="input-container">
+            <div class="input-actions">
+                <button class="action-btn" onclick="document.getElementById('file-p').click()">➕</button>
+                <button class="action-btn">🎙️</button>
+                <div style="flex:1"></div>
+                <button class="mode-switch active" id="fast-m" onclick="setMode('fast')">⚡ Fast</button>
+                <button class="mode-switch" id="deep-m" onclick="setMode('deep')">🧠 Deep Think</button>
             </div>
-            <div class="input-wrapper">
-                <button class="plus-btn" onclick="document.getElementById('file-input').click()">+</button>
-                <input type="file" id="file-input" hidden multiple onchange="handleFiles()">
-                <input type="text" id="user-input" placeholder="तपाईंको सन्देश यहाँ लेख्नुहोस्...">
-                <button onclick="handleSend()" style="background:var(--primary); border:none; padding:10px 20px; border-radius:12px; cursor:pointer; font-weight:bold;">Send</button>
+
+            <div class="box-wrapper">
+                <input type="file" id="file-p" hidden multiple onchange="handleFiles()">
+                <textarea id="user-input" rows="1" placeholder="Type a message... (No limit)" oninput="autoResize(this)"></textarea>
+                <button class="send-btn" onclick="handleSend()">🚀</button>
             </div>
         </div>
     </main>
 
     <script>
-        let aiStyle = 'fast';
-        let chatHistory = [];
+        let mode = 'fast';
+        const input = document.getElementById('user-input');
 
-        function setAIStyle(style) {
-            aiStyle = style;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(style + '-mode').classList.add('active');
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
         }
 
-        function setTool(tool) {
-            document.getElementById('user-input').value = `Using ${tool} tool, please help me with: `;
-            document.getElementById('user-input').focus();
+        function setMode(m) {
+            mode = m;
+            document.getElementById('fast-m').classList.toggle('active', m === 'fast');
+            document.getElementById('deep-m').classList.toggle('active', m === 'deep');
         }
 
-        function handleFiles() {
-            const files = document.getElementById('file-input').files;
-            if(files.length > 0) {
-                addMessage(`📁 ${files.length} file(s) attached: ${files[0].name}...`, 'user');
-                addMessage("I have received your file. I am analyzing it now...", 'bot');
-            }
+        function useTool(t) {
+            input.value = `I want to use the ${t} tool. My details are: `;
+            input.focus();
+            autoResize(input);
         }
 
-        function addMessage(html, type, thought = "") {
+        function addMsg(html, type, thought = "") {
             const win = document.getElementById('chat-window');
             const div = document.createElement('div');
             div.className = `bubble ${type}`;
             
             let content = "";
-            if(thought && aiStyle === 'deep') {
-                content += `<div class="thought-process" style="display:block;">💭 Deep Thinking: ${thought}</div>`;
+            if(thought && mode === 'deep') {
+                content += `<div class="thinking"><span>🧠</span> Deep Analysis Active...</div>`;
             }
             content += html;
             
@@ -166,37 +190,44 @@
         }
 
         function handleSend() {
-            const input = document.getElementById('user-input');
             const val = input.value.trim();
             if(!val) return;
 
-            addMessage(val, 'user');
+            addMsg(val, 'user');
             input.value = "";
+            input.style.height = 'auto';
 
-            // Deep Thinking Simulation
+            // Advanced Response Simulation
             setTimeout(() => {
-                let thought = "Analyzing data, checking verified sources, and structuring the best response...";
                 let response = "";
+                let lang = /[क-ञ]/.test(val) ? 'ne' : 'en';
 
-                if(val.toLowerCase().includes('cv')) {
-                    response = "I am generating your professional CV. Please provide your photo via the + button for a better result.";
-                } else if(val.toLowerCase().includes('photo') || val.toLowerCase().includes('image')) {
-                    response = `Generating realistic image... <br><img src="https://picsum.photos/seed/${Math.random()}/800/500" style="width:100%; border-radius:10px; margin-top:10px;">`;
+                if(val.toLowerCase().includes('cv') || val.toLowerCase().includes('resume')) {
+                    response = lang === 'ne' ? "मैले तपाईंको प्रोफेशनल CV डाटा प्रोसेस गरें। कृपया थप विवरण दिनुहोस्।" : "I've processed your professional CV data. Please provide specific details.";
+                } else if(val.toLowerCase().includes('image') || val.toLowerCase().includes('photo')) {
+                    response = `<img src="https://picsum.photos/seed/${Math.random()}/800/500" style="width:100%; border-radius:15px; margin-top:10px;">`;
                 } else {
-                    response = `[Model 1: ${aiStyle.toUpperCase()} Mode] I have processed your request. This is the most accurate information available based on your query.`;
+                    response = lang === 'ne' ? "तपाईंको प्रश्नको लागि धन्यवाद। मोडल १ ले तपाईंलाई उत्कृष्ट उत्तर दिँदैछ।" : "Model 1 is providing you with the most accurate response based on your request.";
                 }
 
-                addMessage(response, 'bot', thought);
-                chatHistory.push({q: val, a: response});
-                localStorage.setItem('omni_history', JSON.stringify(chatHistory));
-            }, aiStyle === 'deep' ? 2000 : 800);
+                addMsg(response, 'bot', "Thinking deeply about your request...");
+            }, mode === 'deep' ? 2000 : 600);
         }
 
-        // Load History
-        window.onload = () => {
-            const saved = localStorage.getItem('omni_history');
-            if(saved) chatHistory = JSON.parse(saved);
-        };
+        function handleFiles() {
+            const files = document.getElementById('file-p').files;
+            if(files.length > 0) {
+                addMsg(`📎 <b>${files.length} file(s) uploaded:</b> ${files[0].name}`, 'user');
+                addMsg("Files received. Model 1 is now analyzing the content...", 'bot');
+            }
+        }
+
+        function toggleTheme() {
+            const current = document.body.dataset.theme;
+            document.body.dataset.theme = current === 'dark' ? 'light' : 'dark';
+        }
+
+        input.addEventListener('keypress', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
     </script>
 </body>
 </html>
