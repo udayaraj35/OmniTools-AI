@@ -3,193 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniTools AI | Model 1 </title>
+    <title>OmniTools AI | SaaS Model 1</title>
     <style>
         :root {
-            --bg: #f3f6f9;
+            --bg: #f4f7fb;
             --sidebar-bg: #0b0e14;
             --primary: #00d2ff;
             --white: #ffffff;
-            --text: #1a202c;
-            --glass: rgba(255, 255, 255, 0.1);
+            --text-main: #1e293b;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         [data-theme="dark"] {
-            --bg: #05070a;
+            --bg: #020617;
             --sidebar-bg: #000000;
-            --white: #161b22;
-            --text: #e6edf3;
+            --white: #0f172a;
+            --text-main: #f1f5f9;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
 
-        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Auth Layer */
-        #auth-layer { position: fixed; inset: 0; background: var(--sidebar-bg); z-index: 5000; display: flex; justify-content: center; align-items: center; }
-        .auth-box { background: var(--white); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid var(--primary); width: 90%; max-width: 380px; }
+        /* Auth Overlay */
+        #auth-overlay {
+            position: fixed; inset: 0; background: var(--sidebar-bg); z-index: 5000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .auth-card {
+            background: var(--white); padding: 40px; border-radius: 24px; border: 1px solid var(--primary);
+            width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
 
-        /* Sidebar */
-        .sidebar { width: 280px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: 0.3s; }
+        /* Sidebar Architecture */
+        .sidebar { width: 300px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: 0.3s; }
         .sidebar-brand { padding: 30px 20px; border-bottom: 1px solid var(--glass); }
-        .brand-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+        .brand-name { font-size: 1.7rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
 
-        .chat-history { flex: 1; overflow-y: auto; padding: 15px; }
-        .history-card { background: var(--glass); padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; cursor: pointer; }
+        .history-box { flex: 1; overflow-y: auto; padding: 20px; }
+        .chat-link {
+            padding: 12px; background: var(--glass); border-radius: 12px; margin-bottom: 10px;
+            font-size: 0.85rem; display: flex; justify-content: space-between; cursor: pointer; border: 1px solid transparent;
+        }
+        .chat-link:hover { border-color: var(--primary); background: rgba(0,210,255,0.1); }
 
         /* Chat Area */
-        .main-content { flex: 1; display: flex; flex-direction: column; position: relative; }
-        header { padding: 15px 30px; background: var(--white); border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-
-        #chat-flow { flex: 1; padding: 25px 15%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .msg { max-width: 80%; padding: 15px 20px; border-radius: 20px; font-size: 0.95rem; line-height: 1.6; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .user-msg { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .bot-msg { align-self: flex-start; background: var(--white); border-bottom-left-radius: 2px; border: 1px solid rgba(0,0,0,0.05); }
-
-        /* Floating Tools Menu */
-        #tools-menu {
-            position: absolute; bottom: 100px; left: 50px; background: var(--white);
-            border: 1px solid var(--primary); border-radius: 18px; padding: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; flex-direction: column; gap: 8px; z-index: 100;
-            width: 220px; animation: slideUp 0.3s ease;
+        .main-chat { flex: 1; display: flex; flex-direction: column; position: relative; }
+        header { 
+            padding: 15px 30px; background: var(--white); border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .tool-opt { padding: 10px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; }
-        .tool-opt:hover { background: rgba(0, 210, 255, 0.1); }
+        #chat-flow { flex: 1; padding: 30px 15%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .bubble { max-width: 80%; padding: 16px 20px; border-radius: 20px; font-size: 1rem; line-height: 1.6; }
+        .user-bubble { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .bot-bubble { align-self: flex-start; background: var(--white); border-bottom-left-radius: 2px; border: 1px solid rgba(0,0,0,0.05); }
+
+        /* Advanced Tool Box */
+        #tools-popup {
+            position: absolute; bottom: 100px; left: 50px; background: var(--white);
+            border: 1px solid var(--primary); border-radius: 20px; padding: 15px;
+            width: 250px; display: none; flex-direction: column; gap: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: popUp 0.3s ease;
+        }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .tool-btn { padding: 12px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; border: none; background: none; color: var(--text-main); text-align: left; }
+        .tool-btn:hover { background: rgba(0,210,255,0.1); color: var(--primary); }
 
         /* Input Zone */
-        .footer-zone { padding: 20px 10%; position: relative; }
-        .input-pill { background: var(--white); padding: 10px 20px; border-radius: 35px; border: 1px solid rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        
-        textarea { flex: 1; border: none; outline: none; background: transparent; font-size: 1rem; resize: none; max-height: 150px; }
-        .plus-icon { font-size: 1.8rem; color: var(--primary); cursor: pointer; border: none; background: none; transition: 0.3s; }
-        .plus-icon.active { transform: rotate(45deg); color: #ff4d4d; }
-        
-        .send-btn { background: var(--primary); color: white; border: none; padding: 10px 22px; border-radius: 25px; font-weight: bold; cursor: pointer; }
+        .input-area { padding: 20px 10%; background: transparent; }
+        .input-container {
+            background: var(--white); padding: 10px 20px; border-radius: 40px;
+            display: flex; align-items: center; gap: 15px; border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
 
-        @media (max-width: 768px) { .sidebar { display: none; } #chat-flow { padding: 20px; } .footer-zone { padding: 15px; } #tools-menu { left: 15px; } }
+        textarea { flex: 1; border: none; outline: none; background: transparent; font-size: 1rem; resize: none; max-height: 150px; color: var(--text-main); }
+        .plus-btn { font-size: 1.8rem; color: var(--primary); cursor: pointer; border: none; background: none; }
+
+        .send-btn { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; }
+
+        .status-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; background: var(--primary); color: black; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="auth-layer">
-        <div class="auth-box">
-            <h1 style="color:var(--primary); margin-bottom:10px;">OmniTools AI</h1>
-            <p style="opacity:0.6; margin-bottom:25px;">Developed by Udaya Raj Khanal</p>
-            <input type="text" id="user-name" placeholder="Your Name" style="width:100%; padding:14px; border-radius:12px; border:1px solid #ddd; margin-bottom:15px; outline:none;">
-            <button onclick="startApp()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">Enter Dashboard</button>
+    <div id="auth-overlay">
+        <div class="auth-card">
+            <h1 class="brand-name">OmniTools AI</h1>
+            <p style="margin: 10px 0 30px; opacity: 0.6;">Professional AI SaaS Ecosystem</p>
+            <input type="text" id="username" placeholder="Full Name" style="width:100%; padding:15px; border-radius:12px; border:1px solid #ddd; margin-bottom:10px; outline:none;">
+            <input type="password" id="pass" placeholder="Password" style="width:100%; padding:15px; border-radius:12px; border:1px solid #ddd; margin-bottom:20px; outline:none;">
+            <button onclick="login()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">Sign In / Sign Up</button>
+            <p style="font-size:0.7rem; margin-top:15px; opacity:0.5;">Secured by OmniTrust Encryption</p>
         </div>
     </div>
 
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <div class="brand-text">OmniTools AI</div>
-            <div style="font-size:0.6rem; background:var(--primary); color:black; padding:2px 6px; border-radius:4px; font-weight:bold; display:inline-block; margin-top:5px;">MODEL 1 PRO</div>
+            <div class="brand-name">OmniTools AI</div>
+            <span class="status-badge">MODEL 1 PRO</span>
         </div>
-        <div class="chat-history" id="history-box">
-            <p style="font-size:0.7rem; opacity:0.4; margin-bottom:15px; letter-spacing:1px;">HISTORY</p>
-        </div>
-        <div style="padding:20px; border-top:1px solid var(--glass);">
-            <p style="font-size:0.8rem; color:var(--primary);">By Udaya Raj Khanal</p>
+        <div class="history-box" id="history-box">
+            <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 20px; letter-spacing: 1px;">CHAT SESSIONS</p>
+            </div>
+        <div style="padding: 20px; border-top: 1px solid var(--glass);">
+            <p style="font-size: 0.8rem; color: var(--primary);">System Status: <span style="color:#00ff88;">Stable</span></p>
+            <button onclick="logout()" style="background:none; border:none; color:#ff4d4d; font-size:0.75rem; cursor:pointer; margin-top:10px;">End Session</button>
         </div>
     </aside>
 
-    <main class="main-content">
+    <main class="main-chat">
         <header>
-            <div id="top-title"><strong>OmniTools AI</strong></div>
-            <button onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'" style="background:none; border:none; font-size:1.4rem; cursor:pointer;">🌓</button>
+            <div id="user-display"><strong>OmniTools AI</strong></div>
+            <button onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'" style="background:none; border:none; font-size:1.3rem; cursor:pointer;">🌓</button>
         </header>
 
         <div id="chat-flow"></div>
 
-        <div class="footer-zone">
-            <div id="tools-menu">
-                <p style="font-size:0.7rem; opacity:0.5; margin-bottom:5px;">SELECT TOOL</p>
-                <div class="tool-opt" onclick="selectTool('CV Maker')">📄 Europass CV Maker</div>
-                <div class="tool-opt" onclick="selectTool('ATS Resume')">🤖 ATS Resume Pro</div>
-                <div class="tool-opt" onclick="selectTool('Image Gen')">🎨 Realistic Image Gen</div>
-                <div class="tool-opt" onclick="selectTool('Social Media')">📱 Social Story Expert</div>
-                <div class="tool-opt" onclick="selectTool('Analysis')">📊 Data Analysis</div>
+        <div class="input-area">
+            <div id="tools-popup">
+                <p style="font-size:0.7rem; opacity:0.5; margin-bottom:5px;">AI ENGINE MODES</p>
+                <button class="tool-btn" onclick="setMode('CV Maker')">📄 Europass CV Expert</button>
+                <button class="tool-btn" onclick="setMode('ATS Expert')">🤖 ATS Resume System</button>
+                <button class="tool-btn" onclick="setMode('Image Gen')">🎨 Hyper-Realistic Art</button>
+                <button class="tool-btn" onclick="setMode('Data Analysis')">📊 Data & Spreadsheet</button>
             </div>
 
-            <div class="input-pill">
-                <button class="plus-icon" id="plus-trigger" onclick="toggleTools()">+</button>
-                <textarea id="main-input" rows="1" placeholder="Ask OmniTools AI..." oninput="autoExpand(this)"></textarea>
-                <button class="send-btn" onclick="handleSend()">Send</button>
+            <div class="input-container">
+                <button class="plus-btn" onclick="toggleTools()">+</button>
+                <textarea id="user-input" rows="1" placeholder="Type a message..." oninput="autoResize(this)"></textarea>
+                <button class="send-btn" onclick="sendMessage()">Send</button>
             </div>
+            <p style="text-align:center; font-size:0.65rem; opacity:0.4; margin-top:10px;">OmniTools AI: Secure Mode Active | Developer: Udaya Raj Khanal</p>
         </div>
     </main>
 
     <script>
-        let userName = localStorage.getItem('omni_u') || "";
-        let selectedTool = "General";
+        let currentMode = "General";
+        let user = localStorage.getItem('omni_session_user');
+        let chatHistory = JSON.parse(localStorage.getItem(`chats_${user}`)) || [];
 
-        function startApp() {
-            const n = document.getElementById('user-name').value;
-            if(n) {
-                localStorage.setItem('omni_u', n);
+        function login() {
+            const name = document.getElementById('username').value;
+            if(name) {
+                localStorage.setItem('omni_session_user', name);
                 location.reload();
             }
         }
 
-        if(userName) {
-            document.getElementById('auth-layer').style.display = 'none';
-            document.getElementById('top-title').innerHTML = `<strong>OmniTools AI</strong> | User: ${userName}`;
-            addMsg(`नमस्ते <b>${userName}</b>! म <b>OmniTools AI</b> हुँ। म तपाईंलाई कसरी मद्दत गर्न सक्छु? तपाईं + आइकन थिचेर मेरा प्रोफेसनल टुल्सहरू पनि प्रयोग गर्न सक्नुहुन्छ।`, 'bot');
+        if(user) {
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('user-display').innerHTML = `<strong>OmniTools AI</strong> | Active: ${user}`;
+            initWelcome();
+            loadHistory();
         }
 
         function toggleTools() {
-            const menu = document.getElementById('tools-menu');
-            const btn = document.getElementById('plus-trigger');
-            const isOpen = menu.style.display === 'flex';
-            menu.style.display = isOpen ? 'none' : 'flex';
-            btn.classList.toggle('active', !isOpen);
+            const popup = document.getElementById('tools-popup');
+            popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        function selectTool(tool) {
-            selectedTool = tool;
-            document.getElementById('main-input').placeholder = `Using ${tool}... Describe your needs.`;
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('user-input').placeholder = `Mode: ${mode} active...`;
             toggleTools();
         }
 
-        function autoExpand(t) {
+        function autoResize(t) {
             t.style.height = 'auto';
             t.style.height = t.scrollHeight + 'px';
         }
 
-        function addMsg(html, type) {
+        function addBubble(text, type) {
             const flow = document.getElementById('chat-flow');
-            const d = document.createElement('div');
-            d.className = `msg ${type}-msg`;
-            d.innerHTML = html;
-            flow.appendChild(d);
+            const div = document.createElement('div');
+            div.className = `bubble ${type}-bubble`;
+            div.innerHTML = text;
+            flow.appendChild(div);
             flow.scrollTop = flow.scrollHeight;
         }
 
-        function handleSend() {
-            const input = document.getElementById('main-input');
-            const val = input.value.trim();
-            if(!val) return;
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const msg = input.value.trim();
+            if(!msg) return;
 
-            addMsg(val, 'user');
+            addBubble(msg, 'user');
+            
+            // Save to Local History Mockup (Backend equivalent would be MongoDB)
+            const chatObj = { id: Date.now(), title: msg.substring(0, 20) + '...', body: msg };
+            chatHistory.push(chatObj);
+            localStorage.setItem(`chats_${user}`, JSON.stringify(chatHistory));
+            loadHistory();
+
             input.value = "";
             input.style.height = 'auto';
 
+            // SaaS Logic Simulation
             setTimeout(() => {
-                let res = "";
-                if(selectedTool !== "General") {
-                    res = `<b>[${selectedTool} Active]</b> तपाईंको अनुरोध प्राप्त भयो। म तपाईंको लागि उत्कृष्ट नतिजा तयार पार्दैछु।`;
+                let systemResponse = "";
+                let isNep = /[क-ञ]/.test(msg);
+
+                if(currentMode !== "General") {
+                    systemResponse = `<b>[System ${currentMode}]</b>: Processing "${msg}" using specialized LLM parameters...`;
                 } else {
-                    res = /[क-ञ]/.test(val) ? "तपाईंको सन्देशको लागि धन्यवाद! म <b>OmniTools AI</b> तपाईंलाई मद्दत गर्न तयार छु।" : "Thank you for your message! <b>OmniTools AI</b> is here to assist you.";
+                    systemResponse = isNep ? `नमस्ते ${user}, <b>OmniTools AI</b> तपाईंलाई मद्दत गर्न तयार छ।` : `Hello ${user}, <b>OmniTools AI</b> is ready to assist you.`;
                 }
-                addMsg(res, 'bot');
-                selectedTool = "General"; // Reset to general after one task
-                document.getElementById('main-input').placeholder = "Ask OmniTools AI...";
+                
+                addBubble(systemResponse, 'bot');
+                currentMode = "General"; // Reset after task
+                document.getElementById('user-input').placeholder = "Type a message...";
             }, 800);
         }
 
+        function loadHistory() {
+            const box = document.getElementById('history-box');
+            box.innerHTML = `<p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 20px; letter-spacing: 1px;">CHAT SESSIONS</p>`;
+            chatHistory.slice().reverse().forEach(chat => {
+                const item = document.createElement('div');
+                item.className = 'chat-link';
+                item.innerHTML = `<span>💬 ${chat.title}</span> <button onclick="deleteChat(${chat.id})" style="background:none; border:none; color:red; cursor:pointer;">×</button>`;
+                box.appendChild(item);
+            });
+        }
+
+        function deleteChat(id) {
+            chatHistory = chatHistory.filter(c => c.id !== id);
+            localStorage.setItem(`chats_${user}`, JSON.stringify(chatHistory));
+            loadHistory();
+        }
+
+        function initWelcome() {
+            addBubble(`Welcome to <b>OmniTools AI Model 1</b>, ${user}. How can I empower your productivity today?`, 'bot');
+        }
+
         function logout() { localStorage.clear(); location.reload(); }
+
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
     </script>
 </body>
 </html>
