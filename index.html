@@ -1,248 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniTools AI | SaaS Model 1</title>
-    <style>
-        :root {
-            --bg: #f4f7fb;
-            --sidebar-bg: #0b0e14;
-            --primary: #00d2ff;
-            --white: #ffffff;
-            --text-main: #1e293b;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
+<meta charset="UTF-8">
+<title>OmniTools AI - Free Multi Model</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        [data-theme="dark"] {
-            --bg: #020617;
-            --sidebar-bg: #000000;
-            --white: #0f172a;
-            --text-main: #f1f5f9;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-
-        body { background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
-
-        /* Auth Overlay */
-        #auth-overlay {
-            position: fixed; inset: 0; background: var(--sidebar-bg); z-index: 5000;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .auth-card {
-            background: var(--white); padding: 40px; border-radius: 24px; border: 1px solid var(--primary);
-            width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        /* Sidebar Architecture */
-        .sidebar { width: 300px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: 0.3s; }
-        .sidebar-brand { padding: 30px 20px; border-bottom: 1px solid var(--glass); }
-        .brand-name { font-size: 1.7rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
-
-        .history-box { flex: 1; overflow-y: auto; padding: 20px; }
-        .chat-link {
-            padding: 12px; background: var(--glass); border-radius: 12px; margin-bottom: 10px;
-            font-size: 0.85rem; display: flex; justify-content: space-between; cursor: pointer; border: 1px solid transparent;
-        }
-        .chat-link:hover { border-color: var(--primary); background: rgba(0,210,255,0.1); }
-
-        /* Chat Area */
-        .main-chat { flex: 1; display: flex; flex-direction: column; position: relative; }
-        header { 
-            padding: 15px 30px; background: var(--white); border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        #chat-flow { flex: 1; padding: 30px 15%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .bubble { max-width: 80%; padding: 16px 20px; border-radius: 20px; font-size: 1rem; line-height: 1.6; }
-        .user-bubble { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .bot-bubble { align-self: flex-start; background: var(--white); border-bottom-left-radius: 2px; border: 1px solid rgba(0,0,0,0.05); }
-
-        /* Advanced Tool Box */
-        #tools-popup {
-            position: absolute; bottom: 100px; left: 50px; background: var(--white);
-            border: 1px solid var(--primary); border-radius: 20px; padding: 15px;
-            width: 250px; display: none; flex-direction: column; gap: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            animation: popUp 0.3s ease;
-        }
-        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .tool-btn { padding: 12px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; border: none; background: none; color: var(--text-main); text-align: left; }
-        .tool-btn:hover { background: rgba(0,210,255,0.1); color: var(--primary); }
-
-        /* Input Zone */
-        .input-area { padding: 20px 10%; background: transparent; }
-        .input-container {
-            background: var(--white); padding: 10px 20px; border-radius: 40px;
-            display: flex; align-items: center; gap: 15px; border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-
-        textarea { flex: 1; border: none; outline: none; background: transparent; font-size: 1rem; resize: none; max-height: 150px; color: var(--text-main); }
-        .plus-btn { font-size: 1.8rem; color: var(--primary); cursor: pointer; border: none; background: none; }
-
-        .send-btn { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; }
-
-        .status-badge { font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; background: var(--primary); color: black; font-weight: bold; }
-    </style>
+<style>
+body {margin:0;font-family:Arial;background:#0f172a;color:white;display:flex;height:100vh;}
+.sidebar {width:260px;background:#020617;padding:20px;display:flex;flex-direction:column;}
+.sidebar h2 {color:#00d2ff;}
+.sidebar button {margin:5px 0;padding:8px;border:none;border-radius:6px;cursor:pointer;}
+.main {flex:1;display:flex;flex-direction:column;}
+header {padding:15px;background:#111827;display:flex;justify-content:space-between;}
+.chat {flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;}
+.bubble {max-width:70%;padding:12px;border-radius:10px;margin:5px 0;}
+.user {align-self:flex-end;background:#00d2ff;color:black;}
+.bot {align-self:flex-start;background:#1e293b;}
+.input-area {padding:15px;background:#111827;display:flex;}
+textarea {flex:1;padding:10px;border-radius:8px;border:none;}
+.send {margin-left:10px;padding:10px 15px;background:#00d2ff;border:none;border-radius:8px;cursor:pointer;}
+.modal {position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;}
+.modal-box {background:white;color:black;padding:20px;border-radius:12px;width:400px;max-width:90%;}
+input,select,textarea {width:100%;margin:5px 0;padding:8px;}
+</style>
 </head>
+
 <body>
 
-    <div id="auth-overlay">
-        <div class="auth-card">
-            <h1 class="brand-name">OmniTools AI</h1>
-            <p style="margin: 10px 0 30px; opacity: 0.6;">Professional AI SaaS Ecosystem</p>
-            <input type="text" id="username" placeholder="Full Name" style="width:100%; padding:15px; border-radius:12px; border:1px solid #ddd; margin-bottom:10px; outline:none;">
-            <input type="password" id="pass" placeholder="Password" style="width:100%; padding:15px; border-radius:12px; border:1px solid #ddd; margin-bottom:20px; outline:none;">
-            <button onclick="login()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">Sign In / Sign Up</button>
-            <p style="font-size:0.7rem; margin-top:15px; opacity:0.5;">Secured by OmniTrust Encryption</p>
-        </div>
-    </div>
+<div class="sidebar">
+<h2>OmniTools AI</h2>
+<button onclick="openSettings()">⚙ Settings</button>
+<button onclick="logout()">🚪 Logout</button>
+<div style="margin-top:auto;font-size:12px;color:#888;">Free AI Gateway</div>
+</div>
 
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-name">OmniTools AI</div>
-            <span class="status-badge">MODEL 1 PRO</span>
-        </div>
-        <div class="history-box" id="history-box">
-            <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 20px; letter-spacing: 1px;">CHAT SESSIONS</p>
-            </div>
-        <div style="padding: 20px; border-top: 1px solid var(--glass);">
-            <p style="font-size: 0.8rem; color: var(--primary);">System Status: <span style="color:#00ff88;">Stable</span></p>
-            <button onclick="logout()" style="background:none; border:none; color:#ff4d4d; font-size:0.75rem; cursor:pointer; margin-top:10px;">End Session</button>
-        </div>
-    </aside>
+<div class="main">
+<header>
+<div id="userDisplay">Not Logged In</div>
+<button onclick="toggleTheme()">🌓</button>
+</header>
 
-    <main class="main-chat">
-        <header>
-            <div id="user-display"><strong>OmniTools AI</strong></div>
-            <button onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'" style="background:none; border:none; font-size:1.3rem; cursor:pointer;">🌓</button>
-        </header>
+<div class="chat" id="chat"></div>
 
-        <div id="chat-flow"></div>
+<div class="input-area">
+<textarea id="msg" rows="1" placeholder="Type message..."></textarea>
+<button class="send" onclick="sendMessage()">Send</button>
+</div>
+</div>
 
-        <div class="input-area">
-            <div id="tools-popup">
-                <p style="font-size:0.7rem; opacity:0.5; margin-bottom:5px;">AI ENGINE MODES</p>
-                <button class="tool-btn" onclick="setMode('CV Maker')">📄 Europass CV Expert</button>
-                <button class="tool-btn" onclick="setMode('ATS Expert')">🤖 ATS Resume System</button>
-                <button class="tool-btn" onclick="setMode('Image Gen')">🎨 Hyper-Realistic Art</button>
-                <button class="tool-btn" onclick="setMode('Data Analysis')">📊 Data & Spreadsheet</button>
-            </div>
+<!-- SETTINGS MODAL -->
+<div class="modal" id="settingsModal">
+<div class="modal-box">
+<h3>AI Settings</h3>
 
-            <div class="input-container">
-                <button class="plus-btn" onclick="toggleTools()">+</button>
-                <textarea id="user-input" rows="1" placeholder="Type a message..." oninput="autoResize(this)"></textarea>
-                <button class="send-btn" onclick="sendMessage()">Send</button>
-            </div>
-            <p style="text-align:center; font-size:0.65rem; opacity:0.4; margin-top:10px;">OmniTools AI: Secure Mode Active | Developer: Udaya Raj Khanal</p>
-        </div>
-    </main>
+<label>Select Model</label>
+<select id="modelSelect">
+<option value="nvidia/nemotron-3-nano-30b-a3b:free">Nemotron 30B</option>
+<option value="deepseek/deepseek-r1:free">DeepSeek R1</option>
+<option value="z-ai/glm-4.5-air:free">GLM 4.5 Air</option>
+<option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+</select>
 
-    <script>
-        let currentMode = "General";
-        let user = localStorage.getItem('omni_session_user');
-        let chatHistory = JSON.parse(localStorage.getItem(`chats_${user}`)) || [];
+<label>OpenRouter API Key</label>
+<input type="password" id="openrouterKey">
 
-        function login() {
-            const name = document.getElementById('username').value;
-            if(name) {
-                localStorage.setItem('omni_session_user', name);
-                location.reload();
-            }
-        }
+<label>OpenAI API Key</label>
+<input type="password" id="openaiKey">
 
-        if(user) {
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.getElementById('user-display').innerHTML = `<strong>OmniTools AI</strong> | Active: ${user}`;
-            initWelcome();
-            loadHistory();
-        }
+<label>System Prompt</label>
+<textarea id="systemPrompt">You are a helpful AI assistant.</textarea>
 
-        function toggleTools() {
-            const popup = document.getElementById('tools-popup');
-            popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
-        }
+<button onclick="saveSettings()">Save</button>
+<button onclick="closeSettings()">Cancel</button>
 
-        function setMode(mode) {
-            currentMode = mode;
-            document.getElementById('user-input').placeholder = `Mode: ${mode} active...`;
-            toggleTools();
-        }
+</div>
+</div>
 
-        function autoResize(t) {
-            t.style.height = 'auto';
-            t.style.height = t.scrollHeight + 'px';
-        }
+<script>
+let user = localStorage.getItem("user");
 
-        function addBubble(text, type) {
-            const flow = document.getElementById('chat-flow');
-            const div = document.createElement('div');
-            div.className = `bubble ${type}-bubble`;
-            div.innerHTML = text;
-            flow.appendChild(div);
-            flow.scrollTop = flow.scrollHeight;
-        }
+if(!user){
+user = prompt("Enter your name:");
+if(user){
+localStorage.setItem("user",user);
+}
+}
 
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const msg = input.value.trim();
-            if(!msg) return;
+document.getElementById("userDisplay").innerText="Active: "+user;
 
-            addBubble(msg, 'user');
-            
-            // Save to Local History Mockup (Backend equivalent would be MongoDB)
-            const chatObj = { id: Date.now(), title: msg.substring(0, 20) + '...', body: msg };
-            chatHistory.push(chatObj);
-            localStorage.setItem(`chats_${user}`, JSON.stringify(chatHistory));
-            loadHistory();
+function addBubble(text,type){
+const div=document.createElement("div");
+div.className="bubble "+type;
+div.innerHTML=text;
+document.getElementById("chat").appendChild(div);
+document.getElementById("chat").scrollTop=999999;
+}
 
-            input.value = "";
-            input.style.height = 'auto';
+function openSettings(){
+document.getElementById("settingsModal").style.display="flex";
+let s=JSON.parse(localStorage.getItem("settings")||"{}");
+document.getElementById("modelSelect").value=s.model||"nvidia/nemotron-3-nano-30b-a3b:free";
+document.getElementById("openrouterKey").value=s.openrouter||"";
+document.getElementById("openaiKey").value=s.openai||"";
+document.getElementById("systemPrompt").value=s.prompt||"You are a helpful AI assistant.";
+}
 
-            // SaaS Logic Simulation
-            setTimeout(() => {
-                let systemResponse = "";
-                let isNep = /[क-ञ]/.test(msg);
+function closeSettings(){
+document.getElementById("settingsModal").style.display="none";
+}
 
-                if(currentMode !== "General") {
-                    systemResponse = `<b>[System ${currentMode}]</b>: Processing "${msg}" using specialized LLM parameters...`;
-                } else {
-                    systemResponse = isNep ? `नमस्ते ${user}, <b>OmniTools AI</b> तपाईंलाई मद्दत गर्न तयार छ।` : `Hello ${user}, <b>OmniTools AI</b> is ready to assist you.`;
-                }
-                
-                addBubble(systemResponse, 'bot');
-                currentMode = "General"; // Reset after task
-                document.getElementById('user-input').placeholder = "Type a message...";
-            }, 800);
-        }
+function saveSettings(){
+let settings={
+model:document.getElementById("modelSelect").value,
+openrouter:document.getElementById("openrouterKey").value,
+openai:document.getElementById("openaiKey").value,
+prompt:document.getElementById("systemPrompt").value
+};
+localStorage.setItem("settings",JSON.stringify(settings));
+alert("Saved");
+closeSettings();
+}
 
-        function loadHistory() {
-            const box = document.getElementById('history-box');
-            box.innerHTML = `<p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 20px; letter-spacing: 1px;">CHAT SESSIONS</p>`;
-            chatHistory.slice().reverse().forEach(chat => {
-                const item = document.createElement('div');
-                item.className = 'chat-link';
-                item.innerHTML = `<span>💬 ${chat.title}</span> <button onclick="deleteChat(${chat.id})" style="background:none; border:none; color:red; cursor:pointer;">×</button>`;
-                box.appendChild(item);
-            });
-        }
+async function sendMessage(){
+let message=document.getElementById("msg").value;
+if(!message) return;
+addBubble(message,"user");
+document.getElementById("msg").value="";
 
-        function deleteChat(id) {
-            chatHistory = chatHistory.filter(c => c.id !== id);
-            localStorage.setItem(`chats_${user}`, JSON.stringify(chatHistory));
-            loadHistory();
-        }
+let settings=JSON.parse(localStorage.getItem("settings")||"{}");
+if(!settings.model){
+alert("Configure settings first.");
+return;
+}
 
-        function initWelcome() {
-            addBubble(`Welcome to <b>OmniTools AI Model 1</b>, ${user}. How can I empower your productivity today?`, 'bot');
-        }
+let reply="";
 
-        function logout() { localStorage.clear(); location.reload(); }
+if(settings.model.includes("/")){
 
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-        });
-    </script>
+if(!settings.openrouter){
+alert("OpenRouter API key missing");
+return;
+}
+
+let res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+settings.openrouter
+},
+body:JSON.stringify({
+model:settings.model,
+messages:[
+{role:"system",content:settings.prompt},
+{role:"user",content:message}
+]
+})
+});
+
+let data=await res.json();
+reply=data.choices?.[0]?.message?.content||"Error";
+
+}else{
+
+if(!settings.openai){
+alert("OpenAI key missing");
+return;
+}
+
+let res=await fetch("https://api.openai.com/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+settings.openai
+},
+body:JSON.stringify({
+model:settings.model,
+messages:[
+{role:"system",content:settings.prompt},
+{role:"user",content:message}
+]
+})
+});
+
+let data=await res.json();
+reply=data.choices?.[0]?.message?.content||"Error";
+}
+
+addBubble(reply,"bot");
+}
+
+function logout(){
+localStorage.clear();
+location.reload();
+}
+
+function toggleTheme(){
+if(document.body.style.background=="white"){
+document.body.style.background="#0f172a";
+document.body.style.color="white";
+}else{
+document.body.style.background="white";
+document.body.style.color="black";
+}
+}
+</script>
+
 </body>
 </html>
