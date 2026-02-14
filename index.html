@@ -2,194 +2,173 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>omniTools AI | Model 1 - Advanced</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniTools AI | Model 1 Pro</title>
     <style>
         :root {
-            --bg: #f7f9fb;
-            --sidebar-bg: #11141b;
-            --accent: #00d2ff;
-            --text-dark: #1a1a1a;
-            --text-light: #ffffff;
-            --glass: rgba(255, 255, 255, 0.08);
-            --bot-bubble: #f0f2f5;
-            --user-bubble: #00d2ff;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --bg: #f3f6f9;
+            --sidebar-bg: #0b0e14;
+            --primary: #00d2ff;
+            --white: #ffffff;
+            --text: #1a202c;
+            --glass: rgba(255, 255, 255, 0.1);
         }
 
         [data-theme="dark"] {
-            --bg: #0d1117;
-            --bot-bubble: #161b22;
-            --text-dark: #e6edf3;
-            --sidebar-bg: #010409;
+            --bg: #05070a;
+            --sidebar-bg: #000000;
+            --white: #161b22;
+            --text: #e6edf3;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; transition: 0.3s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 
-        body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--text-dark); }
+        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar - Glassmorphism style */
-        .sidebar {
-            width: 280px; background: var(--sidebar-bg); color: var(--text-light);
-            display: flex; flex-direction: column; padding: 25px; z-index: 100;
+        /* Auth Layer */
+        #auth-layer { position: fixed; inset: 0; background: var(--sidebar-bg); z-index: 5000; display: flex; justify-content: center; align-items: center; }
+        .auth-box { background: var(--white); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid var(--primary); width: 90%; max-width: 380px; }
+
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: 0.3s; }
+        .sidebar-brand { padding: 30px 20px; border-bottom: 1px solid var(--glass); }
+        .brand-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+
+        .chat-history { flex: 1; overflow-y: auto; padding: 15px; }
+        .history-card { background: var(--glass); padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; cursor: pointer; }
+
+        /* Chat Area */
+        .main-content { flex: 1; display: flex; flex-direction: column; position: relative; }
+        header { padding: 15px 30px; background: var(--white); border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+
+        #chat-flow { flex: 1; padding: 25px 15%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .msg { max-width: 80%; padding: 15px 20px; border-radius: 20px; font-size: 0.95rem; line-height: 1.6; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .user-msg { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .bot-msg { align-self: flex-start; background: var(--white); border-bottom-left-radius: 2px; border: 1px solid rgba(0,0,0,0.05); }
+
+        /* Floating Tools Menu */
+        #tools-menu {
+            position: absolute; bottom: 100px; left: 50px; background: var(--white);
+            border: 1px solid var(--primary); border-radius: 18px; padding: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; flex-direction: column; gap: 8px; z-index: 100;
+            width: 220px; animation: slideUp 0.3s ease;
         }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .logo-box { margin-bottom: 40px; }
-        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--accent); letter-spacing: -1px; }
-        .model-tag { 
-            background: var(--accent); color: #000; font-size: 0.7rem; 
-            padding: 3px 10px; border-radius: 6px; font-weight: 900; width: fit-content; margin-top: 5px;
-        }
+        .tool-opt { padding: 10px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; }
+        .tool-opt:hover { background: rgba(0, 210, 255, 0.1); }
 
-        .tools-list { flex: 1; overflow-y: auto; }
-        .tool-item {
-            background: var(--glass); border: 1px solid transparent; color: #fff; padding: 14px;
-            border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 0.9rem;
-        }
-        .tool-item:hover { background: rgba(0, 210, 255, 0.1); border-color: var(--accent); transform: translateX(5px); }
-
-        /* Main Area */
-        .main-chat { flex: 1; display: flex; flex-direction: column; position: relative; }
-
-        header {
-            height: 70px; padding: 0 30px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        #chat-window { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; scroll-behavior: smooth; }
-
-        /* Message Bubbles - Advanced ChatGPT Style */
-        .bubble { max-width: 85%; padding: 16px 22px; border-radius: 22px; font-size: 1rem; line-height: 1.6; position: relative; box-shadow: var(--shadow); }
-        .user { align-self: flex-end; background: linear-gradient(135deg, var(--accent), #3a7bd5); color: white; border-bottom-right-radius: 4px; }
-        .bot { align-self: flex-start; background: var(--bot-bubble); border-bottom-left-radius: 4px; border: 1px solid rgba(0,0,0,0.03); }
-
-        .thinking { font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-
-        /* Input Zone - No character limit */
-        .input-container { padding: 25px 50px; background: transparent; }
-        .input-actions { display: flex; gap: 15px; margin-bottom: 12px; align-items: center; }
+        /* Input Zone */
+        .footer-zone { padding: 20px 10%; position: relative; }
+        .input-pill { background: var(--white); padding: 10px 20px; border-radius: 35px; border: 1px solid rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
-        .mode-switch {
-            background: var(--bot-bubble); border: 1px solid rgba(0,0,0,0.05); padding: 8px 18px;
-            border-radius: 25px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
-        }
-        .mode-switch.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-        .box-wrapper {
-            display: flex; align-items: center; background: var(--bot-bubble); 
-            padding: 12px 25px; border-radius: 35px; border: 1px solid rgba(0,0,0,0.08); box-shadow: var(--shadow);
-        }
-
-        .action-btn { font-size: 1.4rem; color: var(--accent); cursor: pointer; margin-right: 15px; background:none; border:none; }
-        textarea { 
-            flex: 1; background: transparent; border: none; outline: none; font-size: 1.05rem; 
-            color: var(--text-dark); resize: none; max-height: 150px; min-height: 24px;
-        }
+        textarea { flex: 1; border: none; outline: none; background: transparent; font-size: 1rem; resize: none; max-height: 150px; }
+        .plus-icon { font-size: 1.8rem; color: var(--primary); cursor: pointer; border: none; background: none; transition: 0.3s; }
+        .plus-icon.active { transform: rotate(45deg); color: #ff4d4d; }
         
-        .send-btn { 
-            background: var(--accent); color: white; border: none; width: 45px; height: 45px;
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-        }
-        .send-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--accent); }
+        .send-btn { background: var(--primary); color: white; border: none; padding: 10px 22px; border-radius: 25px; font-weight: bold; cursor: pointer; }
 
-        /* Mobile Fix */
-        @media (max-width: 768px) { .sidebar { display: none; } .input-container { padding: 15px; } .bubble { max-width: 90%; } }
+        @media (max-width: 768px) { .sidebar { display: none; } #chat-flow { padding: 20px; } .footer-zone { padding: 15px; } #tools-menu { left: 15px; } }
     </style>
 </head>
-<body data-theme="light">
+<body>
+
+    <div id="auth-layer">
+        <div class="auth-box">
+            <h1 style="color:var(--primary); margin-bottom:10px;">OmniTools AI</h1>
+            <p style="opacity:0.6; margin-bottom:25px;">Developed by Udaya Raj Khanal</p>
+            <input type="text" id="user-name" placeholder="Your Name" style="width:100%; padding:14px; border-radius:12px; border:1px solid #ddd; margin-bottom:15px; outline:none;">
+            <button onclick="startApp()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">Enter Dashboard</button>
+        </div>
+    </div>
 
     <aside class="sidebar">
-        <div class="logo-box">
-            <div class="logo-text">omniTools</div>
-            <div class="model-tag">MODEL 1 PRO</div>
+        <div class="sidebar-brand">
+            <div class="brand-text">OmniTools AI</div>
+            <div style="font-size:0.6rem; background:var(--primary); color:black; padding:2px 6px; border-radius:4px; font-weight:bold; display:inline-block; margin-top:5px;">MODEL 1 PRO</div>
         </div>
-        
-        <div class="tools-list">
-            <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 15px; letter-spacing: 1px;">PROFESSIONAL TOOLS</p>
-            <div class="tool-item" onclick="useTool('Europass CV')">📄 Europass CV Maker</div>
-            <div class="tool-item" onclick="useTool('ATS Resume')">🤖 ATS Resume Expert</div>
-            <div class="tool-item" onclick="useTool('AI Image')">🎨 realistic Image Generator</div>
-            <div class="tool-item" onclick="useTool('Data Analysis')">📊 Excel & Data Pro</div>
-            <div class="tool-item" onclick="useTool('Social Media')">📱 Social Content Kit</div>
+        <div class="chat-history" id="history-box">
+            <p style="font-size:0.7rem; opacity:0.4; margin-bottom:15px; letter-spacing:1px;">HISTORY</p>
         </div>
-        
-        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass);">
-            <div style="font-size: 0.8rem; color: var(--accent);">By Udaya Raj Khanal</div>
-            <div style="font-size: 0.6rem; opacity: 0.4; margin-top: 5px;">OmniTools v1.5.0 Build 2026</div>
+        <div style="padding:20px; border-top:1px solid var(--glass);">
+            <p style="font-size:0.8rem; color:var(--primary);">By Udaya Raj Khanal</p>
         </div>
     </aside>
 
-    <main class="main-chat">
+    <main class="main-content">
         <header>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <span style="width:10px; height:10px; background:#00ff88; border-radius:50%;"></span>
-                <strong>omniTools AI Mode 1</strong>
-            </div>
-            <button onclick="toggleTheme()" class="action-btn" style="margin:0;">🌓</button>
+            <div id="top-title"><strong>OmniTools AI</strong></div>
+            <button onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'" style="background:none; border:none; font-size:1.4rem; cursor:pointer;">🌓</button>
         </header>
 
-        <div id="chat-window">
-            <div class="bubble bot">
-                नमस्ते! म <b>omniTools AI Model 1</b> हुँ। मलाई उदय राज खनालले अझ शक्तिशाली र एडभान्स बनाउनुभएको छ। <br><br>
-                अब म लामो सन्देशहरू बुझ्न सक्छु र तपाईंको जुनसुकै प्रश्नको सही उत्तर, CV निर्माण वा फोटो जेनेरेसन गर्न सक्छु। मलाई केही सोध्नुहोस्!
-            </div>
-        </div>
+        <div id="chat-flow"></div>
 
-        <div class="input-container">
-            <div class="input-actions">
-                <button class="action-btn" onclick="document.getElementById('file-p').click()">➕</button>
-                <button class="action-btn">🎙️</button>
-                <div style="flex:1"></div>
-                <button class="mode-switch active" id="fast-m" onclick="setMode('fast')">⚡ Fast</button>
-                <button class="mode-switch" id="deep-m" onclick="setMode('deep')">🧠 Deep Think</button>
+        <div class="footer-zone">
+            <div id="tools-menu">
+                <p style="font-size:0.7rem; opacity:0.5; margin-bottom:5px;">SELECT TOOL</p>
+                <div class="tool-opt" onclick="selectTool('CV Maker')">📄 Europass CV Maker</div>
+                <div class="tool-opt" onclick="selectTool('ATS Resume')">🤖 ATS Resume Pro</div>
+                <div class="tool-opt" onclick="selectTool('Image Gen')">🎨 Realistic Image Gen</div>
+                <div class="tool-opt" onclick="selectTool('Social Media')">📱 Social Story Expert</div>
+                <div class="tool-opt" onclick="selectTool('Analysis')">📊 Data Analysis</div>
             </div>
 
-            <div class="box-wrapper">
-                <input type="file" id="file-p" hidden multiple onchange="handleFiles()">
-                <textarea id="user-input" rows="1" placeholder="Type a message... (No limit)" oninput="autoResize(this)"></textarea>
-                <button class="send-btn" onclick="handleSend()">🚀</button>
+            <div class="input-pill">
+                <button class="plus-icon" id="plus-trigger" onclick="toggleTools()">+</button>
+                <textarea id="main-input" rows="1" placeholder="Ask OmniTools AI..." oninput="autoExpand(this)"></textarea>
+                <button class="send-btn" onclick="handleSend()">Send</button>
             </div>
         </div>
     </main>
 
     <script>
-        let mode = 'fast';
-        const input = document.getElementById('user-input');
+        let userName = localStorage.getItem('omni_u') || "";
+        let selectedTool = "General";
 
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
-        }
-
-        function setMode(m) {
-            mode = m;
-            document.getElementById('fast-m').classList.toggle('active', m === 'fast');
-            document.getElementById('deep-m').classList.toggle('active', m === 'deep');
-        }
-
-        function useTool(t) {
-            input.value = `I want to use the ${t} tool. My details are: `;
-            input.focus();
-            autoResize(input);
-        }
-
-        function addMsg(html, type, thought = "") {
-            const win = document.getElementById('chat-window');
-            const div = document.createElement('div');
-            div.className = `bubble ${type}`;
-            
-            let content = "";
-            if(thought && mode === 'deep') {
-                content += `<div class="thinking"><span>🧠</span> Deep Analysis Active...</div>`;
+        function startApp() {
+            const n = document.getElementById('user-name').value;
+            if(n) {
+                localStorage.setItem('omni_u', n);
+                location.reload();
             }
-            content += html;
-            
-            div.innerHTML = content;
-            win.appendChild(div);
-            win.scrollTop = win.scrollHeight;
+        }
+
+        if(userName) {
+            document.getElementById('auth-layer').style.display = 'none';
+            document.getElementById('top-title').innerHTML = `<strong>OmniTools AI</strong> | User: ${userName}`;
+            addMsg(`नमस्ते <b>${userName}</b>! म <b>OmniTools AI</b> हुँ। म तपाईंलाई कसरी मद्दत गर्न सक्छु? तपाईं + आइकन थिचेर मेरा प्रोफेसनल टुल्सहरू पनि प्रयोग गर्न सक्नुहुन्छ।`, 'bot');
+        }
+
+        function toggleTools() {
+            const menu = document.getElementById('tools-menu');
+            const btn = document.getElementById('plus-trigger');
+            const isOpen = menu.style.display === 'flex';
+            menu.style.display = isOpen ? 'none' : 'flex';
+            btn.classList.toggle('active', !isOpen);
+        }
+
+        function selectTool(tool) {
+            selectedTool = tool;
+            document.getElementById('main-input').placeholder = `Using ${tool}... Describe your needs.`;
+            toggleTools();
+        }
+
+        function autoExpand(t) {
+            t.style.height = 'auto';
+            t.style.height = t.scrollHeight + 'px';
+        }
+
+        function addMsg(html, type) {
+            const flow = document.getElementById('chat-flow');
+            const d = document.createElement('div');
+            d.className = `msg ${type}-msg`;
+            d.innerHTML = html;
+            flow.appendChild(d);
+            flow.scrollTop = flow.scrollHeight;
         }
 
         function handleSend() {
+            const input = document.getElementById('main-input');
             const val = input.value.trim();
             if(!val) return;
 
@@ -197,37 +176,20 @@
             input.value = "";
             input.style.height = 'auto';
 
-            // Advanced Response Simulation
             setTimeout(() => {
-                let response = "";
-                let lang = /[क-ञ]/.test(val) ? 'ne' : 'en';
-
-                if(val.toLowerCase().includes('cv') || val.toLowerCase().includes('resume')) {
-                    response = lang === 'ne' ? "मैले तपाईंको प्रोफेशनल CV डाटा प्रोसेस गरें। कृपया थप विवरण दिनुहोस्।" : "I've processed your professional CV data. Please provide specific details.";
-                } else if(val.toLowerCase().includes('image') || val.toLowerCase().includes('photo')) {
-                    response = `<img src="https://picsum.photos/seed/${Math.random()}/800/500" style="width:100%; border-radius:15px; margin-top:10px;">`;
+                let res = "";
+                if(selectedTool !== "General") {
+                    res = `<b>[${selectedTool} Active]</b> तपाईंको अनुरोध प्राप्त भयो। म तपाईंको लागि उत्कृष्ट नतिजा तयार पार्दैछु।`;
                 } else {
-                    response = lang === 'ne' ? "तपाईंको प्रश्नको लागि धन्यवाद। मोडल १ ले तपाईंलाई उत्कृष्ट उत्तर दिँदैछ।" : "Model 1 is providing you with the most accurate response based on your request.";
+                    res = /[क-ञ]/.test(val) ? "तपाईंको सन्देशको लागि धन्यवाद! म <b>OmniTools AI</b> तपाईंलाई मद्दत गर्न तयार छु।" : "Thank you for your message! <b>OmniTools AI</b> is here to assist you.";
                 }
-
-                addMsg(response, 'bot', "Thinking deeply about your request...");
-            }, mode === 'deep' ? 2000 : 600);
+                addMsg(res, 'bot');
+                selectedTool = "General"; // Reset to general after one task
+                document.getElementById('main-input').placeholder = "Ask OmniTools AI...";
+            }, 800);
         }
 
-        function handleFiles() {
-            const files = document.getElementById('file-p').files;
-            if(files.length > 0) {
-                addMsg(`📎 <b>${files.length} file(s) uploaded:</b> ${files[0].name}`, 'user');
-                addMsg("Files received. Model 1 is now analyzing the content...", 'bot');
-            }
-        }
-
-        function toggleTheme() {
-            const current = document.body.dataset.theme;
-            document.body.dataset.theme = current === 'dark' ? 'light' : 'dark';
-        }
-
-        input.addEventListener('keypress', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
