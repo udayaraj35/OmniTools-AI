@@ -3,223 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniTools AI | Intelligence Suite</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <title>OmniTools AI | The Apex Multimodal Suite</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
 
         :root {
-            --bg: #020617;
-            --sidebar: #0f172a;
-            --accent: #06b6d4;
-            --card: #1e293b;
-            --border: rgba(255, 255, 255, 0.1);
-            --text-dim: #94a3b8;
-            --success: #10b981;
+            --bg: #050505;
+            --sidebar: #0a0a0c;
+            --accent: #06b6d4; /* Cyan */
+            --gold: #f59e0b; /* Branding gold */
+            --card: #111113;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-dim: #88888e;
         }
 
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s ease; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         body { margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
 
-        /* AUTH SCREEN */
-        #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); }
-        .auth-card { background: var(--sidebar); padding: 40px; border-radius: 28px; width: 420px; border: 1px solid var(--border); text-align: center; }
-        .auth-card input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; background: #020617; border: 1px solid var(--border); color: white; outline: none; }
-        .primary-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        /* AUTH & BRANDING */
+        #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: var(--card); padding: 50px; border-radius: 30px; width: 450px; border: 1px solid var(--border); text-align: center; box-shadow: 0 0 100px rgba(6, 182, 212, 0.1); }
+        .logo-text { font-size: 2rem; font-weight: 800; background: linear-gradient(to right, var(--accent), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
 
-        /* SIDEBAR & VAULT */
+        /* SIDEBAR NAV */
         .sidebar { width: 340px; background: var(--sidebar); padding: 25px; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+        .nav-section { margin-top: 30px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; cursor: pointer; color: var(--text-dim); margin-bottom: 5px; font-size: 0.9rem; font-weight: 600; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: var(--accent); }
+        .nav-item i { width: 18px; }
+
+        /* KEY VAULT CARDS */
         .vault-container { flex: 1; overflow-y: auto; margin-top: 20px; }
-        
-        .key-item { padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 12px; cursor: pointer; position: relative; }
-        .key-item.active { border-color: var(--accent); background: rgba(6, 182, 212, 0.1); box-shadow: 0 0 20px rgba(6, 182, 212, 0.1); }
-        .key-item .nickname { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
-        .perf-tag { font-size: 10px; background: var(--success); color: black; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-top: 5px; display: inline-block; }
+        .key-card { padding: 15px; border-radius: 16px; background: #161618; border: 1px solid var(--border); margin-bottom: 10px; cursor: pointer; position: relative; }
+        .key-card.active { border-color: var(--accent); background: rgba(6, 182, 212, 0.05); }
 
         /* MAIN CHAT */
-        .main { flex: 1; display: flex; flex-direction: column; background: #020617; }
-        header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(15,23,42,0.5); }
-        .chat-area { flex: 1; overflow-y: auto; padding: 40px 10%; display: flex; flex-direction: column; gap: 25px; }
-        .msg { max-width: 80%; padding: 16px 20px; border-radius: 20px; line-height: 1.6; font-size: 0.95rem; }
-        .user { align-self: flex-end; background: var(--accent); color: black; border-bottom-right-radius: 4px; }
-        .bot { align-self: flex-start; background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        header { padding: 20px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(5,5,5,0.8); backdrop-filter: blur(10px); }
+        
+        .chat-area { flex: 1; overflow-y: auto; padding: 40px 15%; display: flex; flex-direction: column; gap: 30px; }
+        .msg { max-width: 85%; line-height: 1.7; font-size: 1rem; display: flex; gap: 15px; }
+        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .bubble { padding: 16px 24px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); position: relative; }
+        .user .bubble { background: var(--accent); color: black; font-weight: 500; border: none; }
+        .voice-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; gap: 4px; }
 
-        /* INPUT BAR */
-        .input-wrapper { padding: 20px 10% 40px; }
-        .input-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 10px 15px; display: flex; align-items: center; gap: 15px; }
-        textarea { flex: 1; background: transparent; border: none; color: white; outline: none; resize: none; max-height: 150px; }
+        /* COMMAND CENTER (INPUT) */
+        .input-wrapper { padding: 20px 15% 40px; position: relative; }
+        .command-center { background: #161618; border: 1px solid var(--border); border-radius: 28px; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .toolbar { display: flex; gap: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .tool-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; padding: 5px 10px; border-radius: 8px; }
+        .tool-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+        .tool-btn.highlight { color: var(--gold); }
+        
+        .input-row { display: flex; align-items: center; gap: 15px; }
+        textarea { flex: 1; background: transparent; border: none; color: white; outline: none; resize: none; font-size: 1rem; padding: 10px 0; }
+        .send-btn { background: var(--accent); color: black; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         /* MODALS */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--sidebar); padding: 35px; border-radius: 28px; width: 550px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
-        select, .modal input { width: 100%; padding: 12px; border-radius: 12px; background: #020617; border: 1px solid var(--border); color: white; }
-
-        /* MODEL INFO CARDS */
-        .model-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .info-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; border-radius: 12px; font-size: 0.75rem; }
-        .score { color: var(--success); font-weight: 800; font-size: 1rem; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--sidebar); width: 550px; padding: 40px; border-radius: 32px; border: 1px solid var(--border); }
+        input, select { width: 100%; padding: 14px; border-radius: 14px; background: #000; border: 1px solid var(--border); color: white; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="authScreen">
     <div class="auth-card">
-        <div style="background: var(--accent); width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i data-lucide="cpu" color="black" size="32"></i>
-        </div>
-        <h2 id="authTitle">AI Intelligence Portal</h2>
-        <input type="email" id="authEmail" placeholder="Email Address">
-        <input type="password" id="authPass" placeholder="Password">
-        <button class="primary-btn" onclick="handleAuth()">Sign In</button>
-        <p style="font-size: 0.85rem; margin-top: 20px; color: var(--text-dim);">New here? <span style="color:var(--accent); cursor:pointer;" onclick="toggleAuth()">Create Account</span></p>
+        <div class="logo-text">OmniTools AI</div>
+        <p style="color:var(--text-dim); margin: 15px 0 30px;">The Apex Intelligence OS</p>
+        <input type="email" id="authEmail" placeholder="Enter workspace email">
+        <input type="password" id="authPass" placeholder="Secure Password">
+        <button class="primary-btn" onclick="handleAuth()" style="width:100%; padding:15px; border-radius:15px; background:var(--accent); border:none; font-weight:800; margin-top:20px; cursor:pointer;">Initialize Session</button>
     </div>
 </div>
 
 <div class="sidebar">
-    <div class="brand" style="display: flex; align-items: center; gap: 12px; margin-bottom: 35px;">
-        <i data-lucide="zap" color="var(--accent)"></i>
-        <span style="font-weight: 800; letter-spacing: 1px;">OMNIPRO MAX</span>
-    </div>
-
-    <div style="display:flex; justify-content: space-between; align-items: center;">
-        <label style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Verified Vault</label>
-        <button onclick="openKeyModal()" style="background:none; border:none; color:var(--accent); cursor:pointer;"><i data-lucide="plus-circle"></i></button>
+    <div class="logo-text" style="font-size: 1.5rem;">OmniTools AI</div>
+    
+    <div class="nav-section">
+        <div class="nav-item active"><i data-lucide="message-square"></i> Multi-Chat</div>
+        <div class="nav-item"><i data-lucide="image"></i> Studio (Photo AI)</div>
+        <div class="nav-item"><i data-lucide="file-text"></i> Doc Analyzer (PDF/Excel)</div>
+        <div class="nav-item"><i data-lucide="share-2"></i> Social Creator</div>
+        <div class="nav-item" onclick="openKeyModal()"><i data-lucide="key"></i> API Vault</div>
     </div>
 
     <div class="vault-container" id="vaultList"></div>
 
-    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
-        <div id="userInfo" style="display: flex; align-items: center; gap: 10px;">
-            <div id="userInitial" style="width:35px; height:35px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold;">U</div>
-            <div style="font-size: 0.85rem;" id="userEmailDisplay">...</div>
-        </div>
-        <button onclick="logout()" style="background:none; border:none; color:#ef4444; font-size: 0.8rem; cursor:pointer; margin-top:15px;"><i data-lucide="log-out" size="14"></i> Sign Out</button>
+    <div style="margin-top:auto; padding-top:20px; border-top: 1px solid var(--border);">
+        <div id="userName" style="font-weight:700; color:var(--gold);">GUEST OPERATOR</div>
+        <button onclick="location.reload()" style="background:none; border:none; color:var(--text-dim); font-size:0.8rem; cursor:pointer; margin-top:10px;">Logout</button>
     </div>
 </div>
 
 <div class="main">
     <header>
-        <div id="activeModelName" style="color:var(--accent); font-weight: 800; font-size: 0.9rem;">SELECT A MODEL</div>
-        <div id="modelStats" style="font-size: 0.75rem; color: var(--success);"></div>
+        <div id="activeInfo" style="display:flex; flex-direction:column;">
+            <span style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase;">Active Intelligence</span>
+            <span id="activeModelName" style="font-weight:800; color:var(--accent);">No Model Selected</span>
+        </div>
+        <div style="display:flex; gap:20px;">
+            <i data-lucide="mic" style="cursor:pointer; color:var(--text-dim)" onclick="startVoiceInput()" id="micIcon"></i>
+            <i data-lucide="bell" style="color:var(--text-dim)"></i>
+        </div>
     </header>
 
     <div class="chat-area" id="chat">
-        <div class="msg bot">Welcome. Attach your API keys and choose the "Smartest" model for best results.</div>
+        <div class="msg">
+            <div class="bubble">
+                Welcome to <strong>OmniTools AI</strong>. <br><br>
+                - Upload <strong>Photos</strong> to generate AI avatars.<br>
+                - Drop <strong>PDFs/Excel</strong> for instant data extraction.<br>
+                - Ask for <strong>Social Media Posts</strong> or <strong>Game Code</strong>.<br>
+                Select your Gateway key from the sidebar to start.
+            </div>
+        </div>
     </div>
 
     <div class="input-wrapper">
-        <div class="input-box">
-            <textarea id="msg" placeholder="Ask anything..." rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-            <button class="primary-btn" style="width:auto; padding: 10px 20px;" onclick="sendMessage()"><i data-lucide="send" size="18"></i></button>
+        <div class="command-center">
+            <div class="toolbar">
+                <label class="tool-btn highlight"><i data-lucide="image" size="14"></i> Photo AI<input type="file" hidden accept="image/*"></label>
+                <label class="tool-btn"><i data-lucide="file-spreadsheet" size="14"></i> Data/PDF<input type="file" hidden accept=".pdf,.xlsx,.csv"></label>
+                <button class="tool-btn"><i data-lucide="code" size="14"></i> Dev Mode</button>
+                <button class="tool-btn"><i data-lucide="instagram" size="14"></i> Social Post</button>
+            </div>
+            <div class="input-row">
+                <textarea id="msg" placeholder="Command OmniTools AI..." rows="1" oninput="autoSize(this)"></textarea>
+                <button class="send-btn" onclick="sendMessage()"><i data-lucide="arrow-up" size="20"></i></button>
+            </div>
         </div>
     </div>
 </div>
 
 <div id="keyModal" class="modal">
     <div class="modal-content">
-        <h2 style="margin-top:0">Add Intelligence Gateway</h2>
-        
-        <div class="input-group">
-            <label>Key Name</label>
-            <input type="text" id="keyNickname" placeholder="e.g. Logic Master">
-        </div>
-
-        <div class="input-group">
-            <label>API Key</label>
-            <input type="password" id="keyVal" placeholder="sk-or-...">
-        </div>
-
-        <div class="input-group">
-            <label>Choose Model (Ranked by Performance)</label>
-            <select id="modelSelect" onchange="updateModelInfo()">
-                <option value="deepseek/deepseek-r1:free" data-score="98%" data-best="Coding & Logic" data-desc="Strongest free model. Matches GPT-4 in reasoning.">DeepSeek R1 (Rank #1)</option>
-                <option value="google/gemini-2.0-flash-exp:free" data-score="95%" data-best="Speed & Accuracy" data-desc="Ultra-fast. Great for general tasks.">Gemini 2.0 Flash</option>
-                <option value="meta-llama/llama-3.3-70b-instruct:free" data-score="92%" data-best="Creative Writing" data-desc="Very balanced and high quality.">Llama 3.3 70B</option>
-                <option value="custom" data-score="??%" data-best="User Defined" data-desc="Manual input for other models.">Manual Entry</option>
-            </select>
-        </div>
-
-        <div id="manualUI" style="display:none" class="input-group">
-            <label>Custom Model ID</label>
-            <input type="text" id="customModelId">
-        </div>
-
-        <div class="model-info-grid" id="modelPreview">
-            <div class="info-card">
-                <div style="color:var(--text-dim)">Intelligence Score</div>
-                <div class="score" id="previewScore">98%</div>
-            </div>
-            <div class="info-card">
-                <div style="color:var(--text-dim)">Best For</div>
-                <div id="previewBest" style="font-weight:bold">Coding & Logic</div>
-            </div>
-            <div class="info-card" style="grid-column: span 2;">
-                <div style="color:var(--text-dim)">Expert Capability</div>
-                <div id="previewDesc">Strongest reasoning model available for free.</div>
-            </div>
-        </div>
-
-        <div style="display:flex; gap:12px; margin-top:25px;">
-            <button class="primary-btn" style="background:#334155; color:white;" onclick="closeModals()">Cancel</button>
-            <button class="primary-btn" onclick="saveKey()">Connect Gateway</button>
+        <h2 style="margin:0; color:var(--accent);">Gateway Configuration</h2>
+        <input type="text" id="keyNick" placeholder="Gateway Nickname">
+        <input type="password" id="keyVal" placeholder="OpenRouter API Key">
+        <select id="modelSelect">
+            <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Coding & Logic - 98%)</option>
+            <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 (Multimodal - 95%)</option>
+            <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 (Creative - 92%)</option>
+        </select>
+        <div style="display:flex; gap:15px; margin-top:30px;">
+            <button onclick="closeModals()" style="flex:1; padding:15px; border-radius:12px; background:#222; border:none; color:white; cursor:pointer;">Cancel</button>
+            <button onclick="saveKey()" style="flex:1; padding:15px; border-radius:12px; background:var(--accent); border:none; color:black; font-weight:800; cursor:pointer;">Save Gateway</button>
         </div>
     </div>
 </div>
 
 <script>
     lucide.createIcons();
+    let apiVault = JSON.parse(localStorage.getItem("omni_apex_vault") || "[]");
+    let activeIdx = 0;
 
-    let isRegister = false;
-    let apiVault = JSON.parse(localStorage.getItem("omni_vault_v2") || "[]");
-    let activeIndex = localStorage.getItem("omni_active_v2") || 0;
-
-    function toggleAuth() {
-        isRegister = !isRegister;
-        document.getElementById("authTitle").innerText = isRegister ? "Create Expert Account" : "AI Intelligence Portal";
-    }
+    function autoSize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
 
     function handleAuth() {
         const email = document.getElementById("authEmail").value;
-        if(!email) return alert("Enter email");
-        localStorage.setItem("omni_user_v2", JSON.stringify({email, name: email.split('@')[0]}));
-        location.reload();
+        if(!email) return alert("Enter workspace ID");
+        localStorage.setItem("omni_session", email);
+        document.getElementById("authScreen").style.display = "none";
+        document.getElementById("userName").innerText = email.split('@')[0].toUpperCase();
+        renderVault();
     }
 
-    function logout() { localStorage.removeItem("omni_user_v2"); location.reload(); }
-
-    function openKeyModal() { document.getElementById("keyModal").style.display = "flex"; updateModelInfo(); }
+    function openKeyModal() { document.getElementById("keyModal").style.display = "flex"; }
     function closeModals() { document.getElementById("keyModal").style.display = "none"; }
 
-    function updateModelInfo() {
-        const sel = document.getElementById("modelSelect");
-        const opt = sel.options[sel.selectedIndex];
-        
-        document.getElementById("manualUI").style.display = sel.value === "custom" ? "block" : "none";
-        document.getElementById("previewScore").innerText = opt.dataset.score;
-        document.getElementById("previewBest").innerText = opt.dataset.best;
-        document.getElementById("previewDesc").innerText = opt.dataset.desc;
-    }
-
     function saveKey() {
-        const sel = document.getElementById("modelSelect");
-        const opt = sel.options[sel.selectedIndex];
-        const key = document.getElementById("keyVal").value;
-        if(!key) return alert("Key required");
-
-        const model = sel.value === "custom" ? document.getElementById("customModelId").value : sel.value;
-        const entry = {
-            nick: document.getElementById("keyNickname").value || "AI Gateway",
-            key: key,
-            model: model,
-            score: opt.dataset.score || "90%",
-            best: opt.dataset.best || "General"
+        const key = {
+            nick: document.getElementById("keyNick").value || "Main Gateway",
+            val: document.getElementById("keyVal").value,
+            model: document.getElementById("modelSelect").value
         };
-
-        apiVault.unshift(entry);
-        localStorage.setItem("omni_vault_v2", JSON.stringify(apiVault));
+        if(!key.val) return alert("API Key required");
+        apiVault.unshift(key);
+        localStorage.setItem("omni_apex_vault", JSON.stringify(apiVault));
         renderVault();
         closeModals();
     }
@@ -229,57 +192,62 @@
         list.innerHTML = "";
         apiVault.forEach((item, i) => {
             const div = document.createElement("div");
-            div.className = `key-item ${activeIndex == i ? 'active' : ''}`;
-            div.innerHTML = `
-                <span class="nickname">${item.nick}</span>
-                <span style="font-size:0.7rem; color:var(--text-dim)">${item.model}</span><br>
-                <div class="perf-tag">${item.score} Accuracy • ${item.best}</div>
-            `;
-            div.onclick = () => { activeIndex = i; localStorage.setItem("omni_active_v2", i); renderVault(); };
+            div.className = `key-card ${activeIdx == i ? 'active' : ''}`;
+            div.innerHTML = `<div style="font-weight:800; font-size:0.8rem;">${item.nick}</div><div style="font-size:0.6rem; color:var(--text-dim)">${item.model}</div>`;
+            div.onclick = () => { activeIdx = i; renderVault(); };
             list.appendChild(div);
         });
-        if(apiVault[activeIndex]) {
-            document.getElementById("activeModelName").innerText = apiVault[activeIndex].model.toUpperCase();
-            document.getElementById("modelStats").innerText = `⚡ Model Optimized: ${apiVault[activeIndex].score} Performance`;
+        if(apiVault[activeIdx]) {
+            document.getElementById("activeModelName").innerText = apiVault[activeIdx].model.split('/')[1];
         }
-        lucide.createIcons();
+    }
+
+    // VOICE RESPONSE
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
     }
 
     async function sendMessage() {
         const input = document.getElementById("msg");
-        const text = input.value;
-        if(!text || !apiVault[activeIndex]) return alert("Connect a Key first!");
+        const val = input.value;
+        if(!val || !apiVault[activeIdx]) return alert("Select a Gateway Key first!");
 
-        addBubble(text, 'user');
+        addBubble(val, 'user');
         input.value = "";
 
         try {
             const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiVault[activeIndex].key}` },
-                body: JSON.stringify({ model: apiVault[activeIndex].model, messages: [{role: "user", content: text}] })
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiVault[activeIdx].val}` },
+                body: JSON.stringify({ model: apiVault[activeIdx].model, messages: [{role: "user", content: val}] })
             });
             const data = await res.json();
-            addBubble(data.choices[0].message.content, 'bot');
-        } catch(e) { addBubble("Connection failed.", 'bot'); }
+            const reply = data.choices[0].message.content;
+            addBubble(reply, 'bot');
+            // speak(reply); // Optional: Enable for auto-speak
+        } catch(e) { addBubble("Connection lost.", 'bot'); }
     }
 
     function addBubble(text, role) {
         const chat = document.getElementById("chat");
         const div = document.createElement("div");
         div.className = `msg ${role}`;
-        div.innerText = text;
+        div.innerHTML = `
+            <div class="bubble">${text}
+                ${role === 'bot' ? `<button class="voice-btn" onclick="speak('${text.replace(/'/g, "\\'")}')"><i data-lucide="volume-2" size="12"></i> Listen</button>` : ''}
+            </div>`;
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
+        lucide.createIcons();
     }
 
     window.onload = () => {
-        const user = localStorage.getItem("omni_user_v2");
-        if(user) {
-            const u = JSON.parse(user);
+        if(localStorage.getItem("omni_session")) {
             document.getElementById("authScreen").style.display = "none";
-            document.getElementById("userEmailDisplay").innerText = u.email;
-            document.getElementById("userInitial").innerText = u.name[0].toUpperCase();
+            document.getElementById("userName").innerText = localStorage.getItem("omni_session").split('@')[0].toUpperCase();
             renderVault();
         }
     };
